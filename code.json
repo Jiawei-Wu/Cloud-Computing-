@@ -1,0 +1,415 @@
+{
+  "paragraphs": [
+    {
+      "text": "import java.io.File\nimport scala.io.Source\n\nimport org.apache.log4j.Logger\nimport org.apache.log4j.Level\n\nimport org.apache.spark.SparkConf\nimport org.apache.spark.SparkContext\nimport org.apache.spark.SparkContext._\nimport org.apache.spark.rdd._\nimport org.apache.spark.mllib.recommendation.{ALS, Rating, MatrixFactorizationModel}",
+      "dateUpdated": "Nov 17, 2017 3:56:10 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510889541964_-1715259105",
+      "id": "20171117-033221_2029422483",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "import java.io.File\nimport scala.io.Source\nimport org.apache.log4j.Logger\nimport org.apache.log4j.Level\nimport org.apache.spark.SparkConf\nimport org.apache.spark.SparkContext\nimport org.apache.spark.SparkContext._\nimport org.apache.spark.rdd._\nimport org.apache.spark.mllib.recommendation.{ALS, Rating, MatrixFactorizationModel}\n"
+      },
+      "dateCreated": "Nov 17, 2017 3:32:21 AM",
+      "dateStarted": "Nov 17, 2017 3:56:10 AM",
+      "dateFinished": "Nov 17, 2017 3:56:12 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val movieLensHomeDir \u003d \"s3://ee542proj/input/\"\n\nval movies \u003d sc.textFile(movieLensHomeDir + \"movies.dat\").map { line \u003d\u003e\n  val fields \u003d line.split(\"::\")\n  // format: (movieId, movieName)\n  (fields(0).toInt, fields(1))\n}.collect.toMap\n\nval ratings \u003d sc.textFile(movieLensHomeDir + \"ratings.dat\").map { line \u003d\u003e\n  val fields \u003d line.split(\"::\")\n  // format: (timestamp % 10, Rating(userId, movieId, rating))\n  (fields(3).toLong % 10, Rating(fields(0).toInt, fields(1).toInt, fields(2).toDouble))\n}",
+      "dateUpdated": "Nov 17, 2017 4:29:55 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510889627798_-1541197716",
+      "id": "20171117-033347_2059396461",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "movieLensHomeDir: String \u003d s3://ee542proj/\nmovies: scala.collection.immutable.Map[Int,String] \u003d Map(2163 -\u003e Attack of the Killer Tomatoes! (1980), 8607 -\u003e Tokyo Godfathers (2003), 645 -\u003e Nelly \u0026 Monsieur Arnaud (1995), 42900 -\u003e Cul-de-sac (1966), 892 -\u003e Twelfth Night (1996), 69 -\u003e Friday (1995), 53550 -\u003e Rescue Dawn (2006), 37830 -\u003e Final Fantasy VII: Advent Children (2004), 5385 -\u003e Last Waltz, The (1978), 5810 -\u003e 8 Mile (2002), 7375 -\u003e Prince \u0026 Me, The (2004), 5659 -\u003e Rocking Horse Winner, The (1950), 2199 -\u003e Phoenix (1998), 8062 -\u003e Dahmer (2002), 3021 -\u003e Funhouse, The (1981), 8536 -\u003e Intended, The (2002), 5437 -\u003e Manhattan Project, The (1986), 1322 -\u003e Amityville 1992: It\u0027s About Time (1992), 1665 -\u003e Bean (1997), 5509 -\u003e Biggie and Tupac (2002), 5686 -\u003e Russian Ark (Russkiy Kovcheg) (2002), 1036 -\u003e Die Hard (1988), 2822 -\u003e Medi...ratings: org.apache.spark.rdd.RDD[(Long, org.apache.spark.mllib.recommendation.Rating)] \u003d MapPartitionsRDD[11] at map at \u003cconsole\u003e:52\n"
+      },
+      "dateCreated": "Nov 17, 2017 3:33:47 AM",
+      "dateStarted": "Nov 17, 2017 4:06:37 AM",
+      "dateFinished": "Nov 17, 2017 4:06:49 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val numRatings \u003d ratings.count\nval numUsers \u003d ratings.map(_._2.user).distinct.count\nval numMovies \u003d ratings.map(_._2.product).distinct.count\n\nprintln(\"Got \" + numRatings + \" ratings from \"\n  + numUsers + \" users on \" + numMovies + \" movies.\")",
+      "dateUpdated": "Nov 17, 2017 4:07:13 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510890922732_-1030401130",
+      "id": "20171117-035522_480471147",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "numRatings: Long \u003d 10000054\nnumUsers: Long \u003d 69878\nnumMovies: Long \u003d 10677\nGot 10000054 ratings from 69878 users on 10677 movies.\n"
+      },
+      "dateCreated": "Nov 17, 2017 3:55:22 AM",
+      "dateStarted": "Nov 17, 2017 4:07:13 AM",
+      "dateFinished": "Nov 17, 2017 4:07:44 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val training \u003d ratings.filter(x \u003d\u003e x._1 \u003c 6)\n  .values\n  .cache()\nval validation \u003d ratings.filter(x \u003d\u003e x._1 \u003e\u003d 6 \u0026\u0026 x._1 \u003c 8)\n  .values\n  .cache()\nval test \u003d ratings.filter(x \u003d\u003e x._1 \u003e\u003d 8).values.cache()\n\nval numTraining \u003d training.count()\nval numValidation \u003d validation.count()\nval numTest \u003d test.count()\n\nprintln(\"Training: \" + numTraining + \", validation: \" + numValidation + \", test: \" + numTest)",
+      "dateUpdated": "Nov 17, 2017 4:08:07 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510891633751_-1976331230",
+      "id": "20171117-040713_1806118067",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "training: org.apache.spark.rdd.RDD[org.apache.spark.mllib.recommendation.Rating] \u003d MapPartitionsRDD[21] at values at \u003cconsole\u003e:54\nvalidation: org.apache.spark.rdd.RDD[org.apache.spark.mllib.recommendation.Rating] \u003d MapPartitionsRDD[23] at values at \u003cconsole\u003e:54\ntest: org.apache.spark.rdd.RDD[org.apache.spark.mllib.recommendation.Rating] \u003d MapPartitionsRDD[25] at values at \u003cconsole\u003e:53\nnumTraining: Long \u003d 6002473\nnumValidation: Long \u003d 1999675\nnumTest: Long \u003d 1997906\nTraining: 6002473, validation: 1999675, test: 1997906\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:07:13 AM",
+      "dateStarted": "Nov 17, 2017 4:08:07 AM",
+      "dateFinished": "Nov 17, 2017 4:08:30 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "/** Compute RMSE (Root Mean Squared Error). */\ndef computeRmse(model: MatrixFactorizationModel, data: RDD[Rating], n: Long): Double \u003d {\n    val predictions: RDD[Rating] \u003d model.predict(data.map(x \u003d\u003e (x.user, x.product)))\n    val predictionsAndRatings \u003d predictions.map(x \u003d\u003e ((x.user, x.product), x.rating))\n    .join(data.map(x \u003d\u003e ((x.user, x.product), x.rating))).values\n    math.sqrt(predictionsAndRatings.map(x \u003d\u003e (x._1 - x._2) * (x._1 - x._2)).reduce(_ + _) / n)\n}",
+      "dateUpdated": "Nov 17, 2017 4:09:07 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510891687436_-1137285824",
+      "id": "20171117-040807_1139793811",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "computeRmse: (model: org.apache.spark.mllib.recommendation.MatrixFactorizationModel, data: org.apache.spark.rdd.RDD[org.apache.spark.mllib.recommendation.Rating], n: Long)Double\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:08:07 AM",
+      "dateStarted": "Nov 17, 2017 4:09:07 AM",
+      "dateFinished": "Nov 17, 2017 4:09:08 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val ranks \u003d List(8, 12)\nval lambdas \u003d List(0.1, 10.0)\nval numIters \u003d List(10, 20)\nvar bestModel: Option[MatrixFactorizationModel] \u003d None\nvar bestValidationRmse \u003d Double.MaxValue\nvar bestRank \u003d 0\nvar bestLambda \u003d -1.0\nvar bestNumIter \u003d -1\nfor (rank \u003c- ranks; lambda \u003c- lambdas; numIter \u003c- numIters) {\n  val model \u003d ALS.train(training, rank, numIter, lambda)\n  val validationRmse \u003d computeRmse(model, validation, numValidation)\n  println(\"RMSE (validation) \u003d \" + validationRmse + \" for the model trained with rank \u003d \" \n    + rank + \", lambda \u003d \" + lambda + \", and numIter \u003d \" + numIter + \".\")\n  if (validationRmse \u003c bestValidationRmse) {\n    bestModel \u003d Some(model)\n    bestValidationRmse \u003d validationRmse\n    bestRank \u003d rank\n    bestLambda \u003d lambda\n    bestNumIter \u003d numIter\n  }\n}",
+      "dateUpdated": "Nov 17, 2017 4:09:33 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510891747968_-811510775",
+      "id": "20171117-040907_461983613",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "ranks: List[Int] \u003d List(8, 12)\nlambdas: List[Double] \u003d List(0.1, 10.0)\nnumIters: List[Int] \u003d List(10, 20)\nbestModel: Option[org.apache.spark.mllib.recommendation.MatrixFactorizationModel] \u003d None\nbestValidationRmse: Double \u003d 1.7976931348623157E308\nbestRank: Int \u003d 0\nbestLambda: Double \u003d -1.0\nbestNumIter: Int \u003d -1\nRMSE (validation) \u003d 0.8236100381645034 for the model trained with rank \u003d 8, lambda \u003d 0.1, and numIter \u003d 10.\nRMSE (validation) \u003d 0.8189231812579648 for the model trained with rank \u003d 8, lambda \u003d 0.1, and numIter \u003d 20.\nRMSE (validation) \u003d 3.667982949261605 for the model trained with rank \u003d 8, lambda \u003d 10.0, and numIter \u003d 10.\nRMSE (validation) \u003d 3.667982949261605 for the model trained with rank \u003d 8, lambda \u003d 10.0, and numIter \u003d 20.\nRMSE (validation) \u003d 0.8192026516236711 for the model trained with rank \u003d 12, lambda \u003d 0.1, and numIter \u003d 10.\nRMSE (validation) \u003d 0.8154603688946302 for the model trained with rank \u003d 12, lambda \u003d 0.1, and numIter \u003d 20.\nRMSE (validation) \u003d 3.667982949261605 for the model trained with rank \u003d 12, lambda \u003d 10.0, and numIter \u003d 10.\nRMSE (validation) \u003d 3.667982949261605 for the model trained with rank \u003d 12, lambda \u003d 10.0, and numIter \u003d 20.\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:09:07 AM",
+      "dateStarted": "Nov 17, 2017 4:09:33 AM",
+      "dateFinished": "Nov 17, 2017 4:17:12 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "// evaluate the best model on the test set\nval testRmse \u003d computeRmse(bestModel.get, test, numTest)\n\nprintln(\"The best model was trained with rank \u003d \" + bestRank + \" and lambda \u003d \" + bestLambda+ \", and numIter \u003d \" + bestNumIter + \", and its RMSE on the test set is \" + testRmse + \".\")",
+      "dateUpdated": "Nov 17, 2017 4:21:05 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510891773984_1532440821",
+      "id": "20171117-040933_265808916",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "testRmse: Double \u003d 0.8155943302828965\nThe best model was trained with rank \u003d 12 and lambda \u003d 0.1, and numIter \u003d 20, and its RMSE on the test set is 0.8155943302828965.\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:09:33 AM",
+      "dateStarted": "Nov 17, 2017 4:21:05 AM",
+      "dateFinished": "Nov 17, 2017 4:21:21 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "// create a naive baseline and compare it with the best model\nval meanRating \u003d training.union(validation).map(_.rating).mean\nval baselineRmse \u003d \n  math.sqrt(test.map(x \u003d\u003e (meanRating - x.rating) * (meanRating - x.rating)).mean)\nval improvement \u003d (baselineRmse - testRmse) / baselineRmse * 100\nprintln(\"The best model improves the baseline by \" + \"%1.2f\".format(improvement) + \"%.\")",
+      "dateUpdated": "Nov 17, 2017 4:21:50 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892263133_702239183",
+      "id": "20171117-041743_1944290859",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "meanRating: Double \u003d 3.5123623057208624\nbaselineRmse: Double \u003d 1.0597828264660583\nimprovement: Double \u003d 23.041371315426044\nThe best model improves the baseline by 23.04%.\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:17:43 AM",
+      "dateStarted": "Nov 17, 2017 4:21:50 AM",
+      "dateFinished": "Nov 17, 2017 4:21:53 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val candidates \u003d sc.parallelize(movies.keys.toSeq)\nval recommendations \u003d bestModel.get\n  .predict(candidates.map((100, _)))\n  .collect()\n  .sortBy(- _.rating)\n  .take(10)\n\nvar i \u003d 1\nprintln(\"Movies recommended for you:\")\nrecommendations.foreach { r \u003d\u003e\n  println(\"%2d\".format(i) + \": \" + movies(r.product))\n  i +\u003d 1\n}",
+      "dateUpdated": "Nov 17, 2017 4:22:17 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892510594_1743322089",
+      "id": "20171117-042150_2013146203",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "candidates: org.apache.spark.rdd.RDD[Int] \u003d ParallelCollectionRDD[2611] at parallelize at \u003cconsole\u003e:53\nrecommendations: Array[org.apache.spark.mllib.recommendation.Rating] \u003d Array(Rating(100,60983,4.321957638468641), Rating(100,61742,3.802899742530066), Rating(100,42783,3.7482030276395695), Rating(100,53883,3.729625669769619), Rating(100,32090,3.6831572695067334), Rating(100,60291,3.5688352736060587), Rating(100,296,3.526813877388885), Rating(100,64280,3.5211789737280452), Rating(100,858,3.5161860620303176), Rating(100,1221,3.5152962996050747))\ni: Int \u003d 1\nMovies recommended for you:\n 1: Eve and the Fire Horse (2005)\n 2: Maradona by Kusturica (2008)\n 3: Shadows of Forgotten Ancestors (1964)\n 4: Power of Nightmares: The Rise of the Politics of Fear, The (2004)\n 5: Low Life, The (1995)\n 6: Gonzo: The Life and Work of Dr. Hunter S. Thompson (2008)\n 7: Pulp Fiction (1994)\n 8: Hospital (1970)\n 9: Godfather, The (1972)\n10: Godfather: Part II, The (1974)\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:21:50 AM",
+      "dateStarted": "Nov 17, 2017 4:22:17 AM",
+      "dateFinished": "Nov 17, 2017 4:22:20 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val moviesWithGenres \u003d sc.textFile(movieLensHomeDir + \"movies.dat\").map { line \u003d\u003e\n  val fields \u003d line.split(\"::\")\n  // format: (movieId, movieName, genre information)\n  (fields(0).toInt, fields(2))\n}.collect.toMap",
+      "dateUpdated": "Nov 17, 2017 4:22:56 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892537417_-716716405",
+      "id": "20171117-042217_260968309",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "moviesWithGenres: scala.collection.immutable.Map[Int,String] \u003d Map(2163 -\u003e Comedy|Horror, 8607 -\u003e Adventure|Animation|Drama, 645 -\u003e Drama, 42900 -\u003e Comedy|Crime|Drama|Thriller, 892 -\u003e Comedy|Drama|Romance, 69 -\u003e Comedy, 53550 -\u003e Action|Adventure|Drama|War, 37830 -\u003e Action|Adventure|Animation|Fantasy|Sci-Fi, 5385 -\u003e Documentary, 5810 -\u003e Drama, 7375 -\u003e Comedy|Romance, 5659 -\u003e Drama|Horror, 2199 -\u003e Crime|Drama, 8062 -\u003e Drama|Horror|Thriller, 3021 -\u003e Horror, 8536 -\u003e Drama|Thriller, 5437 -\u003e Comedy|Thriller, 1322 -\u003e Horror, 1665 -\u003e Comedy, 5509 -\u003e Documentary, 5686 -\u003e Drama|Fantasy|War, 1036 -\u003e Action|Crime|Thriller, 2822 -\u003e Adventure|Romance, 7304 -\u003e Animation|Comedy|Fantasy|Musical, 54999 -\u003e Action|Adventure|Thriller, 2630 -\u003e Drama, 6085 -\u003e Comedy|Drama, 3873 -\u003e Comedy|Western, 4188 -\u003e Chil..."
+      },
+      "dateCreated": "Nov 17, 2017 4:22:17 AM",
+      "dateStarted": "Nov 17, 2017 4:22:56 AM",
+      "dateFinished": "Nov 17, 2017 4:22:57 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val comedyMovies \u003d moviesWithGenres.filter(_._2.matches(\".*Comedy.*\")).keys\nval candidates \u003d sc.parallelize(comedyMovies.toSeq)\nval recommendations \u003d bestModel.get\n  .predict(candidates.map((100, _)))\n  .collect()\n  .sortBy(- _.rating)\n  .take(5)\n\nvar i \u003d 1\nprintln(\"Comedy Movies recommended for you:\")\nrecommendations.foreach { r \u003d\u003e\n  println(\"%2d\".format(i) + \": \" + movies(r.product))\n  i +\u003d 1\n}",
+      "dateUpdated": "Nov 17, 2017 4:33:51 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892576765_954879648",
+      "id": "20171117-042256_1047952153",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "comedyMovies: Iterable[Int] \u003d Set(2163, 42900, 892, 69, 7375, 5437, 1665, 7304, 6085, 3873, 26413, 4201, 4447, 33004, 3962, 5422, 5469, 3944, 6387, 3883, 62851, 5116, 4094, 6167, 5088, 2889, 59858, 2295, 2306, 4571, 5857, 4464, 101, 2109, 1454, 4909, 2031, 5896, 59625, 2072, 8663, 4062, 3399, 54256, 33675, 6544, 4169, 4899, 53578, 6712, 55020, 5950, 3167, 31160, 4183, 909, 4290, 3477, 333, 3979, 2463, 3397, 49110, 3581, 8784, 3830, 6317, 518, 7990, 2499, 8843, 1083, 468, 54193, 5205, 6172, 4015, 26842, 234, 6690, 2331, 3566, 4728, 6954, 4877, 6014, 5582, 4992, 5131, 6374, 88, 50354, 47047, 32289, 352, 53993, 33145, 1855, 45722, 5454, 56176, 1211, 3990, 7888, 4714, 1158, 582, 762, 3072, 8883, 1005, 5141, 115, 6944, 3317, 5168, 4500, 65027, 7409, 5718, 34018, 37384, 46976, 276, 2622, 4402...candidates: org.apache.spark.rdd.RDD[Int] \u003d ParallelCollectionRDD[2715] at parallelize at \u003cconsole\u003e:55\nrecommendations: Array[org.apache.spark.mllib.recommendation.Rating] \u003d Array(Rating(100,296,3.526813877388885), Rating(100,3030,3.331894391300624), Rating(100,750,3.2978257339389936), Rating(100,50949,3.248493364773723), Rating(100,6119,3.2032888900258034))\ni: Int \u003d 1\nComedy Movies recommended for you:\n 1: Pulp Fiction (1994)\n 2: Yojimbo (1961)\n 3: Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)\n 4: Mafioso (1962)\n 5: Père Noël est une Ordure, Le (1982)\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:22:56 AM",
+      "dateStarted": "Nov 17, 2017 4:33:51 AM",
+      "dateFinished": "Nov 17, 2017 4:33:53 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "// Save and load model\nbestModel.get.save(sc, \"s3://ee542proj/movieLens/model/recommendation\")\nval sameModel \u003d MatrixFactorizationModel.load(sc,  \"s3://ee542proj/movieLens/model/recommendation\")",
+      "dateUpdated": "Nov 17, 2017 4:27:49 AM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892628655_-894531694",
+      "id": "20171117-042348_1889344252",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "sameModel: org.apache.spark.mllib.recommendation.MatrixFactorizationModel \u003d org.apache.spark.mllib.recommendation.MatrixFactorizationModel@4a3c98d1\n"
+      },
+      "dateCreated": "Nov 17, 2017 4:23:48 AM",
+      "dateStarted": "Nov 17, 2017 4:27:49 AM",
+      "dateFinished": "Nov 17, 2017 4:28:03 AM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "jobName": "paragraph_1510892792511_1608673654",
+      "id": "20171117-042632_1103499503",
+      "dateCreated": "Nov 17, 2017 4:26:32 AM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "EE542 PROJ",
+  "id": "2CXRW96A5",
+  "angularObjects": {
+    "2AJXGMUUJ": [],
+    "2AK8P7CPX": [],
+    "2AM1YV5CU": [],
+    "2AKK3QQXU": [],
+    "2ANGGHHMQ": []
+  },
+  "config": {
+    "looknfeel": "default"
+  },
+  "info": {}
+}
